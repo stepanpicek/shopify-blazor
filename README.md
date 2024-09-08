@@ -1,0 +1,1 @@
+Shopify .NET 8 Blazor app
