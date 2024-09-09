@@ -1,5 +1,9 @@
+using Microsoft.EntityFrameworkCore;
 using ShopifyApp.Client.Pages;
 using ShopifyApp.Components;
+using ShopifyApp.Contexts;
+using ShopifyApp.Extensions;
+using ShopifyApp.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +12,8 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
+builder.Services.AddPostgresDb<PostgresDbContext>(builder.Configuration.GetSection("Postgres").Get<PostgresSettings>() ?? new PostgresSettings());
+    
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

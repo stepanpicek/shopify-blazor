@@ -1,0 +1,16 @@
+﻿services:
+  postgres:
+    container_name: shopify_app_postgres
+    image: postgres
+    hostname: localhost
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: shopify_app
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped  
+volumes:
+  postgres-data:
