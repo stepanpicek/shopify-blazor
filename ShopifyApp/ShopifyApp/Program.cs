@@ -1,11 +1,14 @@
-using Microsoft.EntityFrameworkCore;
-using ShopifyApp.Client.Pages;
 using ShopifyApp.Components;
 using ShopifyApp.Contexts;
+using ShopifyApp.Entities;
 using ShopifyApp.Extensions;
 using ShopifyApp.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -13,7 +16,9 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddPostgresDb<PostgresDbContext>(builder.Configuration.GetSection("Postgres").Get<PostgresSettings>() ?? new PostgresSettings());
-    
+builder.Services.AddDefaultIdentity<ShopifyUser>()
+    .AddEntityFrameworkStores<PostgresDbContext>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -30,8 +35,19 @@ else
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+app.MapControllers();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()

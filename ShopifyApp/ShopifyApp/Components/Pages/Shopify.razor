@@ -1,0 +1,38 @@
+@page "/shopify"
+@inject IJSRuntime JsRuntime
+
+<h3>Shopify</h3>
+<button @onclick="SendRequestWithSessionToken">Send Request</button>
+
+<p>@responseMessage</p>
+<script src="https://unpkg.com/@@shopify/app-bridge@2"></script>
+<script src="https://unpkg.com/@@shopify/app-bridge-utils@2"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const AppBridge = window['app-bridge'];
+        const createApp = AppBridge.default;
+        const utils = window['app-bridge-utils'];
+
+        const app = createApp({
+            apiKey: 'YOUR_SHOPIFY_API_KEY',
+            shopOrigin: new URLSearchParams(window.location.search).get('shop'),
+        });
+
+        // Globální metoda pro získání Session Tokenu při každém požadavku
+        window.getNewSessionToken = function() {
+            return utils.getSessionToken(app);
+        };
+    });
+</script>
+
+@code {
+    private string responseMessage = string.Empty;
+
+    private async Task SendRequestWithSessionToken()
+    {
+        var sessionToken = await JsRuntime.InvokeAsync<string>("getNewSessionToken");
+        responseMessage = $"Session Token: {sessionToken}";
+    }
+
+}
