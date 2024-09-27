@@ -1,15 +1,14 @@
+using Carter;
 using ShopifyApp.Components;
 using ShopifyApp.Contexts;
 using ShopifyApp.Entities;
 using ShopifyApp.Extensions;
+using ShopifyApp.Middlewares;
 using ShopifyApp.Settings;
+using ShopifySharp.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
+builder.Services.AddCarter();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
@@ -19,7 +18,13 @@ builder.Services.AddPostgresDb<PostgresDbContext>(builder.Configuration.GetSecti
 builder.Services.AddDefaultIdentity<ShopifyUser>()
     .AddEntityFrameworkStores<PostgresDbContext>();
 
+builder.Services.AddShopifySharpServiceFactories();
+builder.Services.AddShopifySharpUtilities();
+builder.Services.AddHttpContextAccessor();
+
 var app = builder.Build();
+
+app.UseMiddleware<SecureResponseMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -37,18 +42,9 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.UseStaticFiles();
 app.UseAntiforgery();
-
-app.MapControllers();
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
+app.MapCarter();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()

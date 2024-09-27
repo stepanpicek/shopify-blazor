@@ -1,0 +1,7 @@
+@base=http://localhost:5019
+
+### Install shopify app
+GET {{base}}/api/shopify/install?shop=shopify-app-1.myshopify.com
+
+### Install callback shopify app
+GET {{base}}/api/shopify/callback

@@ -1,10 +1,14 @@
 @page "/shopify"
 @inject IJSRuntime JsRuntime
+@inject IConfiguration Configuration
+@inject IHttpContextAccessor HttpContextAccessor
+@inject ILogger<Shopify> Logger
+@rendermode InteractiveServer
 
 <h3>Shopify</h3>
 <button @onclick="SendRequestWithSessionToken">Send Request</button>
 
-<p>@responseMessage</p>
+<p>@_responseMessage</p>
 <script src="https://unpkg.com/@@shopify/app-bridge@2"></script>
 <script src="https://unpkg.com/@@shopify/app-bridge-utils@2"></script>
 
@@ -15,8 +19,8 @@
         const utils = window['app-bridge-utils'];
 
         const app = createApp({
-            apiKey: 'YOUR_SHOPIFY_API_KEY',
-            shopOrigin: new URLSearchParams(window.location.search).get('shop'),
+            apiKey: "@_apiKey",
+            shopOrigin: "@Shop"
         });
 
         // Globální metoda pro získání Session Tokenu při každém požadavku
@@ -27,12 +31,23 @@
 </script>
 
 @code {
-    private string responseMessage = string.Empty;
+    private string? _responseMessage = string.Empty;
+    private string? _apiKey;
+    [SupplyParameterFromQuery] 
+    public string? Shop { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _apiKey = Configuration["Shopify:ClientId"];
+    }
 
     private async Task SendRequestWithSessionToken()
     {
+        Logger.LogInformation("Click");
         var sessionToken = await JsRuntime.InvokeAsync<string>("getNewSessionToken");
-        responseMessage = $"Session Token: {sessionToken}";
+        Logger.LogInformation(sessionToken);
+        _responseMessage = $"Session Token: {sessionToken}";
     }
 
 }
