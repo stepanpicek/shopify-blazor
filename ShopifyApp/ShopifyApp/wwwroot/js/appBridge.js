@@ -1,6 +1,5 @@
 class AppBridge {
     createAppBridge(appConfig) {
-        console.log(appConfig);
         let createApp = window['app-bridge'].default;
         return createApp(appConfig);
     }
