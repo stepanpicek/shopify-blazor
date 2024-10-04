@@ -40,6 +40,11 @@
   <ItemGroup>
     <Folder Include="Contexts\" />
     <Folder Include="Repositories\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\js\appBridge.js" />
   </ItemGroup>
 
 </Project>

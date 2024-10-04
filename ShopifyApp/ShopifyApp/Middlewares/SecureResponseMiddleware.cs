@@ -13,7 +13,7 @@ public class SecureResponseMiddleware
     {
         var shop = context.Request.Query["shop"].ToString();
         context.Response.Headers.Append("Content-Security-Policy",
-            $"frame-ancestors https://{shop} https://admin.shopify.com;");
+            $"frame-ancestors {shop} admin.shopify.com;");
         await _next(context);
     }
 }

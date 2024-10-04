@@ -1,0 +1,44 @@
+@page "/shopify"
+@using ShopifyApp.Core.Services
+@using ShopifyApp.Core.Settings
+@inject IJSRuntime JsRuntime
+@inject IConfiguration Configuration
+@inject ILogger<Shopify> Logger
+@inject IAppBridgeService AppBridgeService
+@rendermode InteractiveWebAssembly
+
+<h3>Shopify</h3>
+<button @onclick="SendRequestWithSessionToken">Send Request</button>
+
+<p>@_responseMessage</p>
+
+@code {
+    private string? _responseMessage = string.Empty;
+    private string? _apiKey;
+    [SupplyParameterFromQuery] 
+    public string? Host { get; set; }
+    private IJSObjectReference app;
+
+    protected override async Task OnInitializedAsync()
+    {
+        base.OnInitialized();
+        _apiKey = Configuration["Shopify:ClientId"];
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var appConfig = new AppBridgeSettings()
+        {
+            ApiKey = _apiKey,
+            Host = Host
+        };
+        await AppBridgeService.GetOrCreateAppBridgeAsync(appConfig);
+    }
+
+    private async Task SendRequestWithSessionToken()
+    {
+        var sessionToken = await AppBridgeService.GetSessionToken();
+        _responseMessage = $"Session Token: {sessionToken}";
+    }
+
+}

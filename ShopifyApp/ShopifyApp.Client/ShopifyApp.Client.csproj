@@ -16,4 +16,8 @@
     <ProjectReference Include="..\ShopifyApp.Core\ShopifyApp.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+
 </Project>
