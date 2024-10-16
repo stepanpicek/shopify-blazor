@@ -1,4 +1,4 @@
-using ShopifyApp.Settings;
+using ShopifyApp.Core.Settings;
 using ShopifySharp.Utilities;
 
 namespace ShopifyApp.Filters;

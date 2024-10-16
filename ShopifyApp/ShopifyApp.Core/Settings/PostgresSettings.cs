@@ -1,4 +1,4 @@
-namespace ShopifyApp.Settings;
+namespace ShopifyApp.Core.Settings;
 
 public class PostgresSettings
 {

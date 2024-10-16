@@ -1,9 +1,6 @@
 using Carter;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ShopifyApp.Core.Services;
-using ShopifyApp.Entities;
-using ShopifyApp.Filters;
 
 namespace ShopifyApp.Endpoints;
 
@@ -11,41 +8,32 @@ public class ShopifyEndpoints : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/shopify")
-            .AddEndpointFilter<ShopifyRequestFilter>();
-        group.MapGet("/install", Install);
-        group.MapGet("/callback", Callback);
-        group.MapGet("/is-authenticated", IsAuthenticated);
+        var group = app.MapGroup(Core.Endpoints.ShopifyEndpoints.Base);
+        group.MapPost(Core.Endpoints.ShopifyEndpoints.IsShopAuthenticated, IsShopAuthenticatedAsync);
+        group.MapPost(Core.Endpoints.ShopifyEndpoints.IsValidShopifyRequest, IsValidShopifyRequestAsync);
+        group.MapPost(Core.Endpoints.ShopifyEndpoints.Authentication, AuthenticationAsync);
     }
 
-    private static async Task<IResult> Install(
-        [FromQuery] string shop,
+    private static async Task<IResult> IsShopAuthenticatedAsync(
+        [FromBody] string shop,
         [FromServices] IAuthService authService)
     {
-        var authorizationUrl = await authService.GetAuthUrlAsync(shop);
-        return Results.Redirect(authorizationUrl);
+        return Results.Ok(await authService.IsShopAuthenticatedAsync(shop));
     }
 
-    private static async Task<IResult> Callback(
-        [FromQuery] string shop,
-        [FromQuery] string host,
-        [FromQuery] string state,
-        [FromQuery] string code,
+    private static async Task<IResult> IsValidShopifyRequestAsync(
+        [FromBody] IDictionary<string, string> query, 
         [FromServices] IAuthService authService)
     {
-        try
-        {
-            await authService.AuthenticateShopAsync(shop, code, state);
-            return Results.Redirect("/shopify?host=" + host);
-        }
-        catch (Exception)
-        {
-            return Results.Forbid();
-        }
+        return Results.Ok(await authService.IsValidShopifyRequestAsync(query));
     }
 
-    private static async Task<IResult> IsAuthenticated(string code, [FromServices] UserManager<ShopifyUser> userManager)
+    private static async Task<IResult> AuthenticationAsync(
+        [FromBody] string shop,
+        [FromHeader(Name = "Authorization")] string sessionToken,
+        [FromServices] IAuthService authService)
     {
-        return Results.Forbid();
+        await authService.AuthenticateShopAsync(shop, sessionToken);
+        return Results.Ok();
     }
 }

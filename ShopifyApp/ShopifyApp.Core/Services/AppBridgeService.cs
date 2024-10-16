@@ -18,4 +18,9 @@ public class AppBridgeService(IJSRuntime jsRuntime, ILogger<AppBridgeService> lo
         var appBridge = _appBridge ?? throw new InvalidOperationException("AppBridge is not initialized");
         return await jsRuntime.InvokeAsync<string>("appBridge.getNewSessionToken", appBridge);
     }
+
+    public bool IsAppBridgeInitialized()
+    {
+        return _appBridge != null;
+    }
 }

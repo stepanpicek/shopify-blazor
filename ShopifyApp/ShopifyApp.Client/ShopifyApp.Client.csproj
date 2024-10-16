@@ -17,11 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
+    <Folder Include="Components\" />
   </ItemGroup>
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\js\appBridge.js" />
   </ItemGroup>
-
 </Project>

@@ -2,18 +2,17 @@
 @using ShopifyApp.Core.Services
 @using System.Web
 @using ShopifyApp.Core.Settings
-@using ShopifyApp.Settings
 @inject IAuthService AuthService
 @inject NavigationManager Navigation
 @inject ILogger<Home> Logger
 @inject IAppBridgeService AppBridgeService
 @inject ShopifySettings ShopifySettings;
-@rendermode @(new InteractiveServerRenderMode())
+@rendermode @(new InteractiveWebAssemblyRenderMode(false))
 
 
 <PageTitle>Home</PageTitle>
 
-@if(isLoading)
+@if(_isLoading)
 {
     <h1>Loading...</h1>
 }
@@ -26,9 +25,7 @@ Welcome to your new app.
 
 @code
 {
-    private bool isLoading = true;
-    [CascadingParameter]
-    public HttpContext? HttpContext { get; set; }
+    private bool _isLoading = true;
     [SupplyParameterFromQuery]
     public string? Shop { get; set; }
     [SupplyParameterFromQuery]
@@ -36,7 +33,7 @@ Welcome to your new app.
     [SupplyParameterFromQuery]
     public string? State { get; set; }
     [SupplyParameterFromQuery]
-    public bool? Embedded { get; set; }
+    public int? Embedded { get; set; }
     [SupplyParameterFromQuery]
     public string? Host { get; set; }
     
@@ -44,35 +41,35 @@ Welcome to your new app.
     {
         var uriBuilder = new UriBuilder(Navigation.Uri);
         var q = HttpUtility.ParseQueryString(uriBuilder.Query);
+        
+        await AppBridgeService.GetOrCreateAppBridgeAsync(new AppBridgeSettings
+        {
+            ApiKey = ShopifySettings.ClientId,
+            Host = Host
+        });
+        
         if (!await AuthService.IsValidShopifyRequestAsync(q.Cast<string>().ToDictionary(s => s, s => q[s])))
         {
             //TODO: Redirect to informative page
             Navigation.NavigateTo("/error");
         }
         
-        if(!string.IsNullOrEmpty(Code))
-        {
-            await AuthService.AuthenticateShopAsync(Shop, Code, State);
-        }
-
-        if (!await AuthService.IsShopAuthenticated(Shop))
-        {
-            var getAuthUrl = await AuthService.GetAuthUrlAsync(Shop);
-            Navigation.NavigateTo(getAuthUrl);
-        }
-        
-        isLoading = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if(firstRender)
         {
-            await AppBridgeService.GetOrCreateAppBridgeAsync(new AppBridgeSettings
+            
+            
+            if (!await AuthService.IsShopAuthenticatedAsync(Shop))
             {
-                ApiKey = ShopifySettings.ClientId,
-                Host = Host
-            });
+                var token = await AppBridgeService.GetSessionToken();
+                await AuthService.AuthenticateShopAsync(Shop, token);
+                return;
+            }
+            _isLoading = false;
+            StateHasChanged();
         }
     }
 }

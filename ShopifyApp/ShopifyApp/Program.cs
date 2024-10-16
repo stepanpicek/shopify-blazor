@@ -3,11 +3,11 @@ using Microsoft.Extensions.Options;
 using ShopifyApp.Components;
 using ShopifyApp.Contexts;
 using ShopifyApp.Core.Services;
+using ShopifyApp.Core.Settings;
 using ShopifyApp.Entities;
 using ShopifyApp.Extensions;
 using ShopifyApp.Middlewares;
 using ShopifyApp.Services;
-using ShopifyApp.Settings;
 using ShopifySharp.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +28,7 @@ builder.Services.AddDefaultIdentity<ShopifyUser>()
 builder.Services.AddShopifySharpServiceFactories();
 builder.Services.AddShopifySharpUtilities();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
 
 builder.Services.AddScoped<IAppBridgeService, AppBridgeService>();
 builder.Services.AddScoped<IAuthService, AuthService>();

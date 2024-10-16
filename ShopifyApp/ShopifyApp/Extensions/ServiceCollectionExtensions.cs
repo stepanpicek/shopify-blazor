@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using ShopifyApp.Settings;
+using ShopifyApp.Core.Settings;
 
 namespace ShopifyApp.Extensions;
 

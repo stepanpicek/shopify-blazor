@@ -8,4 +8,5 @@ public interface IAppBridgeService
 {
     Task<IJSObjectReference> GetOrCreateAppBridgeAsync(AppBridgeSettings settings);
     Task<string> GetSessionToken();
+    bool IsAppBridgeInitialized();
 }
