@@ -8,7 +8,7 @@ public class ShopifyEndpoints : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup(Core.Endpoints.ShopifyEndpoints.Base);
+        var group = app.MapGroup(Core.Endpoints.ShopifyEndpoints.ApiBase);
         group.MapPost(Core.Endpoints.ShopifyEndpoints.IsShopAuthenticated, IsShopAuthenticatedAsync);
         group.MapPost(Core.Endpoints.ShopifyEndpoints.IsValidShopifyRequest, IsValidShopifyRequestAsync);
         group.MapPost(Core.Endpoints.ShopifyEndpoints.Authentication, AuthenticationAsync);

@@ -5,3 +5,11 @@ GET {{base}}/api/shopify/install?shop=shopify-app-1.myshopify.com
 
 ### Install callback shopify app
 GET {{base}}/api/shopify/callback
+
+### Uninstall shopify app
+POST https://patient-snail-moved.ngrok-free.app/webhook/uninstall
+Content-Type: application/json
+
+{
+   
+}

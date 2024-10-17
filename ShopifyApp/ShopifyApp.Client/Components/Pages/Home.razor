@@ -42,31 +42,27 @@ Welcome to your new app.
         var uriBuilder = new UriBuilder(Navigation.Uri);
         var q = HttpUtility.ParseQueryString(uriBuilder.Query);
         
-        await AppBridgeService.GetOrCreateAppBridgeAsync(new AppBridgeSettings
-        {
-            ApiKey = ShopifySettings.ClientId,
-            Host = Host
-        });
-        
         if (!await AuthService.IsValidShopifyRequestAsync(q.Cast<string>().ToDictionary(s => s, s => q[s])))
         {
             //TODO: Redirect to informative page
             Navigation.NavigateTo("/error");
         }
         
+        await AppBridgeService.GetOrCreateAppBridgeAsync(new AppBridgeSettings
+        {
+            ApiKey = ShopifySettings.ClientId,
+            Host = Host
+        });
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if(firstRender)
         {
-            
-            
             if (!await AuthService.IsShopAuthenticatedAsync(Shop))
             {
                 var token = await AppBridgeService.GetSessionToken();
                 await AuthService.AuthenticateShopAsync(Shop, token);
-                return;
             }
             _isLoading = false;
             StateHasChanged();

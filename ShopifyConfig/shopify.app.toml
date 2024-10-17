@@ -19,5 +19,10 @@ redirect_urls = [ "https://patient-snail-moved.ngrok-free.app/" ]
 [webhooks]
 api_version = "2024-04"
 
+[[webhooks.subscriptions]]
+topics = [ "app/uninstalled" ]
+compliance_topics = [ "customers/redact", "customers/data_request", "shop/redact" ]
+uri = "/webhook/uninstall"
+
 [pos]
 embedded = false

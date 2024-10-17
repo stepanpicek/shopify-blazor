@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using ShopifyApp.Core.Dto;
+using ShopifyApp.Core.Endpoints;
 using ShopifyApp.Core.Services;
 using ShopifyApp.Core.Settings;
 using ShopifyApp.Entities;
+using ShopifySharp;
 using ShopifySharp.Utilities;
 
 namespace ShopifyApp.Services;
@@ -15,11 +17,12 @@ public class AuthService : IAuthService
     private readonly UserManager<ShopifyUser> _userManager;
     private readonly ShopifySettings _shopifySettings;
     private readonly HttpClient _httpClient;
+    private readonly ILogger<AuthService> _logger;
     private const string SHOPIFY = "Shopify";
     private const string STATE_TOKEN_NAME = $"{SHOPIFY}_State";
     private const string AUTH_TOKEN_NAME = $"{SHOPIFY}_Auth";
 
-    public AuthService(IShopifyDomainUtility shopifyDomainUtility, IShopifyOauthUtility shopifyOauthUtility, UserManager<ShopifyUser> userManager, ShopifySettings shopifySettings, IShopifyRequestValidationUtility shopifyRequestValidationUtility, HttpClient httpClient)
+    public AuthService(IShopifyDomainUtility shopifyDomainUtility, IShopifyOauthUtility shopifyOauthUtility, UserManager<ShopifyUser> userManager, ShopifySettings shopifySettings, IShopifyRequestValidationUtility shopifyRequestValidationUtility, HttpClient httpClient, ILogger<AuthService> logger)
     {
         _shopifyDomainUtility = shopifyDomainUtility;
         _shopifyOauthUtility = shopifyOauthUtility;
@@ -27,6 +30,7 @@ public class AuthService : IAuthService
         _shopifySettings = shopifySettings;
         _shopifyRequestValidationUtility = shopifyRequestValidationUtility;
         _httpClient = httpClient;
+        _logger = logger;
     }
 
     public Task<bool> IsValidShopifyRequestAsync(IDictionary<string, string> query)
@@ -54,45 +58,31 @@ public class AuthService : IAuthService
         }
 
         var user = await _userManager.FindByNameAsync(shop);
-        if(user == null)
+        if (user == null)
         {
             await _userManager.CreateAsync(new ShopifyUser { UserName = shop });
             user = await _userManager.FindByNameAsync(shop);
         }
-        
+
         var url = _shopifyDomainUtility.BuildShopDomainUri(shop);
         var accessToken = await GetShopifyAccessTokenAsync(url.ToString(), sessionToken);
+        _logger.LogInformation($"Access token for {shop}: {accessToken}, session token: {sessionToken}");
+        await _userManager.SetAuthenticationTokenAsync(user, SHOPIFY, AUTH_TOKEN_NAME, accessToken);
+    }
+
+    public async Task RemoveShopAsync(string shop)
+    {
+        var user = await _userManager.FindByNameAsync(shop);
         if (user != null)
         {
-            await _userManager.SetAuthenticationTokenAsync(user, SHOPIFY, AUTH_TOKEN_NAME, accessToken);
+            await _userManager.DeleteAsync(user);
         }
     }
 
-    public async Task<string> GetAuthUrlAsync(string shop)
-    {
-        if (!await _shopifyDomainUtility.IsValidShopDomainAsync(shop))
-        {
-            throw new InvalidOperationException("Invalid shop domain");
-        }
-
-        var user = await _userManager.FindByNameAsync(shop);
-        if(user == null)
-        {
-            await _userManager.CreateAsync(new ShopifyUser { UserName = shop });
-            user = await _userManager.FindByNameAsync(shop);
-        }
-        
-        var state = Guid.NewGuid().ToString();
-        await _userManager.SetAuthenticationTokenAsync(user!, SHOPIFY, STATE_TOKEN_NAME, state);
-        
-        var authorizationUrl = _shopifyOauthUtility.BuildAuthorizationUrl(_shopifySettings.Scopes, shop, _shopifySettings.ClientId, "https://patient-snail-moved.ngrok-free.app/", state);
-        return authorizationUrl.ToString();
-    }
-    
     private async Task<string?> GetShopifyAccessTokenAsync(string url, string sessionToken)
     {
         var request = new GetOfflineAccessTokenRequest(_shopifySettings.ClientId, _shopifySettings.ClientSecret, sessionToken);
-        var response = await _httpClient.PostAsJsonAsync($"{url}/admin/oauth/access_token", request);
+        var response = await _httpClient.PostAsJsonAsync($"{url}admin/oauth/access_token", request);
         response.EnsureSuccessStatusCode();
         var jsonResponse = await response.Content.ReadFromJsonAsync<GetOfflineAccessTokenResponse>();
         return jsonResponse?.AccessToken;
