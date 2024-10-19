@@ -7,8 +7,7 @@
 @inject ILogger<Home> Logger
 @inject IAppBridgeService AppBridgeService
 @inject ShopifySettings ShopifySettings;
-@rendermode @(new InteractiveWebAssemblyRenderMode(false))
-
+@rendermode InteractiveWebAssembly
 
 <PageTitle>Home</PageTitle>
 
@@ -39,33 +38,36 @@ Welcome to your new app.
     
     protected override async Task OnInitializedAsync()
     {
+        await base.OnInitializedAsync();
         var uriBuilder = new UriBuilder(Navigation.Uri);
         var q = HttpUtility.ParseQueryString(uriBuilder.Query);
-        
-        if (!await AuthService.IsValidShopifyRequestAsync(q.Cast<string>().ToDictionary(s => s, s => q[s])))
-        {
-            //TODO: Redirect to informative page
-            Navigation.NavigateTo("/error");
-        }
-        
-        await AppBridgeService.GetOrCreateAppBridgeAsync(new AppBridgeSettings
-        {
-            ApiKey = ShopifySettings.ClientId,
-            Host = Host
-        });
-    }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if(firstRender)
+        try
         {
+            if (!await AuthService.IsValidShopifyRequestAsync(q.Cast<string>().ToDictionary(s => s, s => q[s])))
+            {
+                //TODO: Redirect to informative page
+                Navigation.NavigateTo("/error");
+                return;
+            }
+        
+            await AppBridgeService.CreateAppBridgeAsync(new AppBridgeSettings
+            {
+                ApiKey = ShopifySettings.ClientId,
+                Host = Host
+            });
+            
             if (!await AuthService.IsShopAuthenticatedAsync(Shop))
             {
                 var token = await AppBridgeService.GetSessionToken();
                 await AuthService.AuthenticateShopAsync(Shop, token);
             }
             _isLoading = false;
-            StateHasChanged();
+
+        }
+        catch (Exception e)
+        {
+            // ignored
         }
     }
 }

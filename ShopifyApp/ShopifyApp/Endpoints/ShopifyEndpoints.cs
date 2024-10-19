@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using Carter;
 using Microsoft.AspNetCore.Mvc;
 using ShopifyApp.Core.Services;
@@ -29,11 +30,12 @@ public class ShopifyEndpoints : ICarterModule
     }
 
     private static async Task<IResult> AuthenticationAsync(
+        HttpRequest request,
         [FromBody] string shop,
-        [FromHeader(Name = "Authorization")] string sessionToken,
         [FromServices] IAuthService authService)
     {
-        await authService.AuthenticateShopAsync(shop, sessionToken);
+        AuthenticationHeaderValue.TryParse(request.Headers.Authorization, out var sessionToken);
+        await authService.AuthenticateShopAsync(shop, sessionToken?.Parameter ?? string.Empty);
         return Results.Ok();
     }
 }

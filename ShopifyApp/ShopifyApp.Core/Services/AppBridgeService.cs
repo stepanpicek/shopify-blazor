@@ -6,17 +6,47 @@ namespace ShopifyApp.Core.Services;
 
 public class AppBridgeService(IJSRuntime jsRuntime, ILogger<AppBridgeService> logger) : IAppBridgeService
 {
-    private IJSObjectReference? _appBridge = null;
+    private IJSObjectReference? _appBridge;
 
-    public async Task<IJSObjectReference> GetOrCreateAppBridgeAsync(AppBridgeSettings settings)
+    public async Task CreateAppBridgeAsync(AppBridgeSettings settings)
     {
-        return _appBridge ??= await jsRuntime.InvokeAsync<IJSObjectReference>("appBridge.createAppBridge", settings);
+        if (settings?.Host == null)
+        {
+            return;
+        }
+
+        try
+        {
+            _appBridge ??= await jsRuntime.InvokeAsync<IJSObjectReference>("appBridge.createAppBridge", settings);
+        }
+        catch (Exception e)
+        {
+            // ignored
+        }
     }
 
     public async Task<string> GetSessionToken()
     {
         var appBridge = _appBridge ?? throw new InvalidOperationException("AppBridge is not initialized");
         return await jsRuntime.InvokeAsync<string>("appBridge.getNewSessionToken", appBridge);
+    }
+
+    public async Task<(bool isSuccess, string? sessionToken)> TryGetSessionToken()
+    {
+        if(_appBridge == null)
+        {
+            return (false, null);
+        }
+
+        try
+        {
+            var sessionToken = await jsRuntime.InvokeAsync<string>("appBridge.getNewSessionToken", _appBridge);
+            return (true, sessionToken);
+        }
+        catch (Exception e)
+        {
+            return (false, null);
+        }
     }
 
     public bool IsAppBridgeInitialized()

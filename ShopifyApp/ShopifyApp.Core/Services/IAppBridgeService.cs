@@ -6,7 +6,8 @@ namespace ShopifyApp.Core.Services;
 
 public interface IAppBridgeService
 {
-    Task<IJSObjectReference> GetOrCreateAppBridgeAsync(AppBridgeSettings settings);
+    Task CreateAppBridgeAsync(AppBridgeSettings settings);
     Task<string> GetSessionToken();
+    Task<(bool isSuccess, string? sessionToken)> TryGetSessionToken();
     bool IsAppBridgeInitialized();
 }

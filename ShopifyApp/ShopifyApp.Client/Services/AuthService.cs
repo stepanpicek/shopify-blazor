@@ -27,7 +27,6 @@ public class AuthService : IAuthService
 
     public async Task AuthenticateShopAsync(string shop, string sessionToken)
     {
-        _httpClient.DefaultRequestHeaders.Add("Authorization", sessionToken);
         var response = await _httpClient.PostAsJsonAsync($"{ShopifyEndpoints.ApiBase}{ShopifyEndpoints.Authentication}", shop);
         response.EnsureSuccessStatusCode();
     }
