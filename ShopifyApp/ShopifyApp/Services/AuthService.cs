@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using ShopifyApp.Core.Dto;
-using ShopifyApp.Core.Endpoints;
 using ShopifyApp.Core.Services;
 using ShopifyApp.Core.Settings;
 using ShopifyApp.Entities;
-using ShopifySharp;
 using ShopifySharp.Utilities;
 
 namespace ShopifyApp.Services;
@@ -77,6 +75,17 @@ public class AuthService : IAuthService
         {
             await _userManager.DeleteAsync(user);
         }
+    }
+
+    public async Task<string> GetShopAuthTokenAsync(string shop)
+    {
+        var user = await _userManager.FindByNameAsync(shop);
+        if (user == null)
+        {
+            throw new InvalidOperationException("User not found");
+        }
+
+        return await _userManager.GetAuthenticationTokenAsync(user, SHOPIFY, AUTH_TOKEN_NAME);
     }
 
     private async Task<string?> GetShopifyAccessTokenAsync(string url, string sessionToken)

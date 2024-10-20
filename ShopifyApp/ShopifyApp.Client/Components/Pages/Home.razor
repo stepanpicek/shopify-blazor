@@ -1,12 +1,14 @@
 ﻿@page "/"
 @using ShopifyApp.Core.Services
 @using System.Web
+@using ShopifyApp.Core.Dto
 @using ShopifyApp.Core.Settings
 @inject IAuthService AuthService
 @inject NavigationManager Navigation
 @inject ILogger<Home> Logger
 @inject IAppBridgeService AppBridgeService
 @inject ShopifySettings ShopifySettings;
+@inject IShopService ShopService;
 @rendermode InteractiveWebAssembly
 
 <PageTitle>Home</PageTitle>
@@ -17,10 +19,11 @@
 }
 else
 {
-    <h1>Welcome auth user!</h1>
+    <h1>Welcome @_shopInfo?.ShopName!</h1>
+    <p>Name: @_shopInfo?.Owner</p>
+    <p>Email: @_shopInfo?.Email</p>
+    
 }
-
-Welcome to your new app.
 
 @code
 {
@@ -35,6 +38,8 @@ Welcome to your new app.
     public int? Embedded { get; set; }
     [SupplyParameterFromQuery]
     public string? Host { get; set; }
+
+    private ShopInfoResponse _shopInfo;
     
     protected override async Task OnInitializedAsync()
     {
@@ -62,10 +67,11 @@ Welcome to your new app.
                 var token = await AppBridgeService.GetSessionToken();
                 await AuthService.AuthenticateShopAsync(Shop, token);
             }
-            _isLoading = false;
 
+            _shopInfo = await ShopService.GetShopAsync();
+            _isLoading = false;
         }
-        catch (Exception e)
+        catch (Exception)
         {
             // ignored
         }

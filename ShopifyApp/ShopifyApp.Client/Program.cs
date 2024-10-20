@@ -9,6 +9,7 @@ builder.Services.AddSingleton(builder.Configuration.GetSection("Shopify").Get<Sh
 builder.Services.AddTransient<ShopifyAuthHandler>();
 builder.Services.AddScoped<IAppBridgeService, AppBridgeService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IShopService, ShopService>();
 builder.Services.AddScoped(sp =>
 {
     var tokenService = sp.GetRequiredService<IAppBridgeService>();

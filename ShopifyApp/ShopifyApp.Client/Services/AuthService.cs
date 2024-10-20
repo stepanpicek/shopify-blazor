@@ -35,4 +35,9 @@ public class AuthService : IAuthService
     {
         throw new NotImplementedException();
     }
+
+    public Task<string> GetShopAuthTokenAsync(string shop)
+    {
+        throw new NotImplementedException();
+    }
 }

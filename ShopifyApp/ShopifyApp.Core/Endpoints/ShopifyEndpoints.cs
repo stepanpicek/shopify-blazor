@@ -10,4 +10,8 @@ public static class ShopifyEndpoints
     public const string WebhookBase = "/webhook";
     public const string Uninstall = "/uninstall";
     
+    
+    public const string ShopBase = "/api/shop";
+    public const string GetShopInfo = "/info";
+    
 }

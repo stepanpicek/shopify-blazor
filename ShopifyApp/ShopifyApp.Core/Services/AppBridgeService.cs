@@ -1,10 +1,9 @@
-using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using ShopifyApp.Core.Settings;
 
 namespace ShopifyApp.Core.Services;
 
-public class AppBridgeService(IJSRuntime jsRuntime, ILogger<AppBridgeService> logger) : IAppBridgeService
+public class AppBridgeService(IJSRuntime jsRuntime) : IAppBridgeService
 {
     private IJSObjectReference? _appBridge;
 
@@ -19,7 +18,7 @@ public class AppBridgeService(IJSRuntime jsRuntime, ILogger<AppBridgeService> lo
         {
             _appBridge ??= await jsRuntime.InvokeAsync<IJSObjectReference>("appBridge.createAppBridge", settings);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             // ignored
         }
@@ -43,7 +42,7 @@ public class AppBridgeService(IJSRuntime jsRuntime, ILogger<AppBridgeService> lo
             var sessionToken = await jsRuntime.InvokeAsync<string>("appBridge.getNewSessionToken", _appBridge);
             return (true, sessionToken);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return (false, null);
         }

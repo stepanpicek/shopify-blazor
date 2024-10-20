@@ -13,3 +13,6 @@ Content-Type: application/json
 {
    
 }
+
+### Get Shop Info
+GET {{base}}/api/shop/info

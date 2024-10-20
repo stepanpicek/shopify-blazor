@@ -8,34 +8,34 @@ public class UninstallWebhook
     public long Id { get; set; }
 
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     [JsonPropertyName("email")]
-    public string Email { get; set; }
+    public string? Email { get; set; }
 
     [JsonPropertyName("domain")]
-    public string Domain { get; set; }
+    public string? Domain { get; set; }
 
     [JsonPropertyName("province")]
-    public string Province { get; set; }
+    public string? Province { get; set; }
 
     [JsonPropertyName("country")]
-    public string Country { get; set; }
+    public string? Country { get; set; }
 
     [JsonPropertyName("address1")]
-    public string Address1 { get; set; }
+    public string? Address1 { get; set; }
 
     [JsonPropertyName("zip")]
-    public string Zip { get; set; }
+    public string? Zip { get; set; }
 
     [JsonPropertyName("city")]
-    public string City { get; set; }
+    public string? City { get; set; }
 
     [JsonPropertyName("source")]
-    public string Source { get; set; }
+    public string? Source { get; set; }
 
     [JsonPropertyName("phone")]
-    public string Phone { get; set; }
+    public string? Phone { get; set; }
 
     [JsonPropertyName("latitude")]
     public double? Latitude { get; set; }
@@ -44,10 +44,10 @@ public class UninstallWebhook
     public double? Longitude { get; set; }
 
     [JsonPropertyName("primary_locale")]
-    public string PrimaryLocale { get; set; }
+    public string? PrimaryLocale { get; set; }
 
     [JsonPropertyName("address2")]
-    public string Address2 { get; set; }
+    public string? Address2 { get; set; }
 
     [JsonPropertyName("created_at")]
     public DateTime? CreatedAt { get; set; }
@@ -56,37 +56,37 @@ public class UninstallWebhook
     public DateTime? UpdatedAt { get; set; }
 
     [JsonPropertyName("country_code")]
-    public string CountryCode { get; set; }
+    public string? CountryCode { get; set; }
 
     [JsonPropertyName("country_name")]
-    public string CountryName { get; set; }
+    public string? CountryName { get; set; }
 
     [JsonPropertyName("currency")]
-    public string Currency { get; set; }
+    public string? Currency { get; set; }
 
     [JsonPropertyName("customer_email")]
-    public string CustomerEmail { get; set; }
+    public string? CustomerEmail { get; set; }
 
     [JsonPropertyName("timezone")]
-    public string Timezone { get; set; }
+    public string? Timezone { get; set; }
 
     [JsonPropertyName("iana_timezone")]
-    public string IanaTimezone { get; set; }
+    public string? IanaTimezone { get; set; }
 
     [JsonPropertyName("shop_owner")]
-    public string ShopOwner { get; set; }
+    public string? ShopOwner { get; set; }
 
     [JsonPropertyName("money_format")]
-    public string MoneyFormat { get; set; }
+    public string? MoneyFormat { get; set; }
 
     [JsonPropertyName("money_with_currency_format")]
-    public string MoneyWithCurrencyFormat { get; set; }
+    public string? MoneyWithCurrencyFormat { get; set; }
 
     [JsonPropertyName("weight_unit")]
-    public string WeightUnit { get; set; }
+    public string? WeightUnit { get; set; }
 
     [JsonPropertyName("province_code")]
-    public string ProvinceCode { get; set; }
+    public string? ProvinceCode { get; set; }
 
     [JsonPropertyName("taxes_included")]
     public bool? TaxesIncluded { get; set; }
@@ -101,10 +101,10 @@ public class UninstallWebhook
     public bool? CountyTaxes { get; set; }
 
     [JsonPropertyName("plan_display_name")]
-    public string PlanDisplayName { get; set; }
+    public string? PlanDisplayName { get; set; }
 
     [JsonPropertyName("plan_name")]
-    public string PlanName { get; set; }
+    public string? PlanName { get; set; }
 
     [JsonPropertyName("has_discounts")]
     public bool HasDiscounts { get; set; }
@@ -113,19 +113,19 @@ public class UninstallWebhook
     public bool HasGiftCards { get; set; }
 
     [JsonPropertyName("myshopify_domain")]
-    public string MyshopifyDomain { get; set; }
+    public string? MyshopifyDomain { get; set; }
 
     [JsonPropertyName("google_apps_domain")]
-    public string GoogleAppsDomain { get; set; }
+    public string? GoogleAppsDomain { get; set; }
 
     [JsonPropertyName("google_apps_login_enabled")]
     public bool? GoogleAppsLoginEnabled { get; set; }
 
     [JsonPropertyName("money_in_emails_format")]
-    public string MoneyInEmailsFormat { get; set; }
+    public string? MoneyInEmailsFormat { get; set; }
 
     [JsonPropertyName("money_with_currency_in_emails_format")]
-    public string MoneyWithCurrencyInEmailsFormat { get; set; }
+    public string? MoneyWithCurrencyInEmailsFormat { get; set; }
 
     [JsonPropertyName("eligible_for_payments")]
     public bool EligibleForPayments { get; set; }
@@ -158,7 +158,7 @@ public class UninstallWebhook
     public bool PreLaunchEnabled { get; set; }
 
     [JsonPropertyName("enabled_presentment_currencies")]
-    public List<string> EnabledPresentmentCurrencies { get; set; }
+    public List<string>? EnabledPresentmentCurrencies { get; set; }
 
     [JsonPropertyName("marketing_sms_consent_enabled_at_checkout")]
     public bool MarketingSmsConsentEnabledAtCheckout { get; set; }

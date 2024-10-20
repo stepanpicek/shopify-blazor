@@ -6,6 +6,7 @@ using ShopifyApp.Core.Services;
 using ShopifyApp.Core.Settings;
 using ShopifyApp.Entities;
 using ShopifyApp.Extensions;
+using ShopifyApp.Handlers;
 using ShopifyApp.Middlewares;
 using ShopifyApp.Services;
 using ShopifySharp.Extensions.DependencyInjection;
@@ -32,6 +33,12 @@ builder.Services.AddHttpClient();
 
 builder.Services.AddScoped<IAppBridgeService, AppBridgeService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IShopService, ShopService>();
+
+builder.Services.AddAuthentication()
+    .AddScheme<ShopifyAuthenticationOptions, ShopifyAuthenticationHandler>(
+        ShopifyAuthenticationOptions.AuthenticationScheme, 
+        _ => {});
 
 var app = builder.Build();
 
