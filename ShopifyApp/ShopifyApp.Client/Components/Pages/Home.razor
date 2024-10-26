@@ -3,6 +3,8 @@
 @using System.Web
 @using ShopifyApp.Core.Dto
 @using ShopifyApp.Core.Settings
+@using BlazorPolaris.Actions
+@using BlazorPolaris.Properties
 @inject IAuthService AuthService
 @inject NavigationManager Navigation
 @inject ILogger<Home> Logger
@@ -12,18 +14,34 @@
 @rendermode InteractiveWebAssembly
 
 <PageTitle>Home</PageTitle>
-
-@if(_isLoading)
-{
-    <h1>Loading...</h1>
-}
-else
-{
-    <h1>Welcome @_shopInfo?.ShopName!</h1>
-    <p>Name: @_shopInfo?.Owner</p>
-    <p>Email: @_shopInfo?.Email</p>
-    
-}
+<div class="Polaris-Page Polaris-Page--fullWidth">
+    <div class="Polaris-Page__Content">
+        <div class="Polaris-Layout">
+            <div class="Polaris-Layout__Section">
+                <div class="Polaris-LegacyCard">
+                    <div class="Polaris-LegacyCard__Header Polaris-LegacyCard__FirstSectionPadding">
+                        @if(_isLoading)
+                        {
+                            <h2 class="Polaris-Text--root Polaris-Text--headingSm">Loading...</h2>
+                        }
+                        else
+                        {
+                            <h2 class="Polaris-Text--root Polaris-Text--headingSm">Welcome @_shopInfo?.ShopName!</h2>
+                            <p>Name: @_shopInfo?.Owner</p>
+                            <p>Email: @_shopInfo?.Email</p>
+                            <PolarisButton TextAlign="TextAlign.Right">
+                                View detail
+                            </PolarisButton>
+                        }
+                    </div>
+                    <div class="Polaris-LegacyCard__Section Polaris-LegacyCard__LastSectionPadding">
+                        <p>View a summary of your online store’s performance.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @code
 {

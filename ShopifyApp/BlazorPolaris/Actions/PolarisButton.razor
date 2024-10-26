@@ -1,0 +1,85 @@
+@using BlazorPolaris.Properties
+
+<button class="Polaris-Button Polaris-Button--pressable @GetVariantClass() @GetSizeClass() @GetTextAlignClass() @(FullWidth ? "Polaris-Button--fullWidth" : "")" type="button">
+    <span class="Polaris-Text--root Polaris-Text--bodySm Polaris-Text--medium">
+        @ChildContent
+    </span>
+</button>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    [Parameter]
+    public Size? Size { get; set; }
+    [Parameter]
+    public TextAlign? TextAlign { get; set; }
+    [Parameter]
+    public bool FullWidth { get; set; }
+    [Parameter]
+    public Disclosure? Disclosure { get; set; }
+    [Parameter]
+    public RenderFragment? Icon { get; set; }
+    [Parameter]
+    public bool? DataPrimaryLink { get; set; }
+    [Parameter]
+    public Tone? Tone { get; set; }
+    [Parameter]
+    public Variant? Variant { get; set; }
+    [Parameter]
+    public string? Id { get; set; }
+    [Parameter]
+    public string? Url { get; set; }
+    [Parameter]
+    public bool? External { get; set; }
+    [Parameter]
+    public string? Target { get; set; }
+    [Parameter]
+    public string? Download { get; set; }
+    [Parameter]
+    public bool? Submit { get; set; }
+    [Parameter]
+    public bool? Disabled { get; set; }
+    [Parameter]
+    public bool? Loading { get; set; }
+    [Parameter]
+    public bool? Pressed { get; set; }
+    [Parameter]
+    public string? AccessibilityLabel { get; set; }
+    [Parameter]
+    public string? Role { get; set; }
+    [Parameter]
+    public string? AriaControls { get; set; }
+    [Parameter]
+    public bool? AriaExpanded { get; set; }
+    [Parameter]
+    public string? AriaDescribedBy { get; set; }
+    [Parameter]
+    public bool? AriaChecked { get; set; }
+
+    private string GetVariantClass() => Variant switch
+    {
+        Properties.Variant.Primary => "Polaris-Button--variantPrimary",
+        Properties.Variant.Plain => "Polaris-Button--variantPlain",   
+        Properties.Variant.Tertiary => "Polaris-Button--variantTertiary",  
+        Properties.Variant.MonochromePlain => "Polaris-Button--variantMonochromePlain",
+        _ => "Polaris-Button--variantSecondary"
+    };
+
+    private string GetSizeClass() => Size switch
+    {
+        Properties.Size.Large => "Polaris-Button--sizeLarge",
+        Properties.Size.Slim => "Polaris-Button--sizeSlim",
+        Properties.Size.Micro => "Polaris-Button--sizeMicro",
+        _ => "Polaris-Button--sizeMedium"
+    };
+
+    private string GetTextAlignClass() => TextAlign switch
+    {
+        Properties.TextAlign.Left => "Polaris-Button--textAlignLeft",
+        Properties.TextAlign.Right => "Polaris-Button--textAlignRight",
+        Properties.TextAlign.Start => "Polaris-Button--textAlignStart",
+        Properties.TextAlign.End => "Polaris-Button--textAlignStart",
+        _ => "Polaris-Button--textAlignCenter"
+    };
+
+}
