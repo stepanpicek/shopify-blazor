@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using MudBlazor.Services;
 using ShopifyApp.Client.Handlers;
 using ShopifyApp.Client.Services;
 using ShopifyApp.Core.Services;
@@ -21,4 +22,5 @@ builder.Services.AddScoped(sp =>
     return new HttpClient(handler) { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) };
 });
 
+builder.Services.AddMudServices();
 await builder.Build().RunAsync();

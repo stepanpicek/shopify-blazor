@@ -1,6 +1,6 @@
-namespace BlazorPolaris.Properties;
+namespace BlazorPolaris.Actions.Button;
 
-public enum Variant
+public enum ButtonVariant
 {
     Plain,
     Primary,

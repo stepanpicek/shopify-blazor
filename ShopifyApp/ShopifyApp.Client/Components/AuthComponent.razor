@@ -1,0 +1,50 @@
+@using ShopifyApp.Core.Services
+@using System.Web
+@using ShopifyApp.Core.Settings
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+@inject IAppBridgeService AppBridgeService
+@inject ShopifySettings ShopifySettings;
+
+@code {
+    [SupplyParameterFromQuery]
+    public string? Shop { get; set; }
+    [SupplyParameterFromQuery]
+    public int? Embedded { get; set; }
+    [SupplyParameterFromQuery]
+    public string? Host { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var uriBuilder = new UriBuilder(Navigation.Uri);
+        var q = HttpUtility.ParseQueryString(uriBuilder.Query);
+
+        try
+        {
+            if (!await AuthService.IsValidShopifyRequestAsync(q.Cast<string>().ToDictionary(s => s, s => q[s])))
+            {
+                //TODO: Redirect to informative page
+                Navigation.NavigateTo("/no-authenticated");
+                return;
+            }
+        
+            await AppBridgeService.CreateAppBridgeAsync(new AppBridgeSettings
+            {
+                ApiKey = ShopifySettings.ClientId,
+                Host = Host
+            });
+            
+            if (!await AuthService.IsShopAuthenticatedAsync(Shop))
+            {
+                var token = await AppBridgeService.GetSessionToken();
+                await AuthService.AuthenticateShopAsync(Shop, token);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.Error.WriteLine(e);
+            // ignored
+        }
+    }
+}

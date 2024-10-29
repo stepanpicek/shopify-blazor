@@ -52,4 +52,9 @@ public class AppBridgeService(IJSRuntime jsRuntime) : IAppBridgeService
     {
         return _appBridge != null;
     }
+
+    public async Task NavigateAsync(string path)
+    {
+        await jsRuntime.InvokeAsync<string>("appBridge.redirect", _appBridge, path);
+    }
 }

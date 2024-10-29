@@ -1,5 +1,6 @@
 using Carter;
 using Microsoft.Extensions.Options;
+using MudBlazor.Services;
 using ShopifyApp.Components;
 using ShopifyApp.Contexts;
 using ShopifyApp.Core.Services;
@@ -34,6 +35,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<IAppBridgeService, AppBridgeService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IShopService, ShopService>();
+builder.Services.AddMudServices();
 
 builder.Services.AddAuthentication()
     .AddScheme<ShopifyAuthenticationOptions, ShopifyAuthenticationHandler>(

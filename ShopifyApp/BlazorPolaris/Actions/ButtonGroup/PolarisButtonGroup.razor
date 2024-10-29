@@ -1,0 +1,44 @@
+@typeparam TItem
+
+<div class="Polaris-ButtonGroup Polaris-ButtonGroup--extraTight @GetGap() @GetVariant()" >
+    @foreach (var item in Items)
+    {
+        <div class="Polaris-ButtonGroup__Item">
+            @if (ButtonTemplate != null)
+            {
+                @ButtonTemplate(item)
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] 
+    public IEnumerable<TItem>? Items { get; set; }
+    [Parameter] 
+    public RenderFragment<TItem>? ButtonTemplate { get; set; }
+    [Parameter]
+    public ButtonGroupGap? Gap { get; set; }
+    [Parameter]
+    public ButtonGroupVariant? Variant { get; set; }
+    [Parameter]
+    public bool? FullWidth { get; set; }
+    [Parameter]
+    public bool? ConnectedTop { get; set; }
+    [Parameter]
+    public bool? NoWrap { get; set; }
+
+    private string GetGap() => Gap switch 
+    {
+        ButtonGroupGap.ExtraTight => "Polaris-ButtonGroup--extraTight",
+        ButtonGroupGap.Tight => "Polaris-ButtonGroup--tight",
+        ButtonGroupGap.Loose => "Polaris-ButtonGroup--loose",
+        _ => ""
+    };
+
+    private string GetVariant() => Variant switch
+    {
+        ButtonGroupVariant.Segmented => "Polaris-ButtonGroup--variantSegmented",
+        _ => ""
+    };
+}

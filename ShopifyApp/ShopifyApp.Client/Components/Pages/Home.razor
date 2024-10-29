@@ -1,16 +1,11 @@
 ﻿@page "/"
 @using ShopifyApp.Core.Services
-@using System.Web
 @using ShopifyApp.Core.Dto
-@using ShopifyApp.Core.Settings
-@using BlazorPolaris.Actions
-@using BlazorPolaris.Properties
-@inject IAuthService AuthService
-@inject NavigationManager Navigation
+@using BlazorPolaris.Actions.Button
 @inject ILogger<Home> Logger
+@inject IShopService ShopService
 @inject IAppBridgeService AppBridgeService
-@inject ShopifySettings ShopifySettings;
-@inject IShopService ShopService;
+@inherits AuthComponent
 @rendermode InteractiveWebAssembly
 
 <PageTitle>Home</PageTitle>
@@ -22,20 +17,27 @@
                     <div class="Polaris-LegacyCard__Header Polaris-LegacyCard__FirstSectionPadding">
                         @if(_isLoading)
                         {
-                            <h2 class="Polaris-Text--root Polaris-Text--headingSm">Loading...</h2>
+                            <div class="Polaris-SkeletonBodyText__SkeletonBodyTextContainer">
+                                <div class="Polaris-SkeletonBodyText">
+                                </div>
+                                <div class="Polaris-SkeletonBodyText">
+                                </div>
+                                <div class="Polaris-SkeletonBodyText">
+                                </div>
+                            </div>
                         }
                         else
                         {
                             <h2 class="Polaris-Text--root Polaris-Text--headingSm">Welcome @_shopInfo?.ShopName!</h2>
                             <p>Name: @_shopInfo?.Owner</p>
                             <p>Email: @_shopInfo?.Email</p>
-                            <PolarisButton TextAlign="TextAlign.Right">
+                            <PolarisButton TextAlign="ButtonTextAlign.Right">
                                 View detail
                             </PolarisButton>
                         }
                     </div>
                     <div class="Polaris-LegacyCard__Section Polaris-LegacyCard__LastSectionPadding">
-                        <p>View a summary of your online store’s performance.</p>
+                        
                     </div>
                 </div>
             </div>
@@ -46,52 +48,24 @@
 @code
 {
     private bool _isLoading = true;
-    [SupplyParameterFromQuery]
-    public string? Shop { get; set; }
-    [SupplyParameterFromQuery]
-    public string? Code { get; set; }
-    [SupplyParameterFromQuery]
-    public string? State { get; set; }
-    [SupplyParameterFromQuery]
-    public int? Embedded { get; set; }
-    [SupplyParameterFromQuery]
-    public string? Host { get; set; }
-
-    private ShopInfoResponse _shopInfo;
-    
+    private ShopInfoResponse? _shopInfo;
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        var uriBuilder = new UriBuilder(Navigation.Uri);
-        var q = HttpUtility.ParseQueryString(uriBuilder.Query);
-
         try
         {
-            if (!await AuthService.IsValidShopifyRequestAsync(q.Cast<string>().ToDictionary(s => s, s => q[s])))
-            {
-                //TODO: Redirect to informative page
-                Navigation.NavigateTo("/error");
-                return;
-            }
-        
-            await AppBridgeService.CreateAppBridgeAsync(new AppBridgeSettings
-            {
-                ApiKey = ShopifySettings.ClientId,
-                Host = Host
-            });
-            
-            if (!await AuthService.IsShopAuthenticatedAsync(Shop))
-            {
-                var token = await AppBridgeService.GetSessionToken();
-                await AuthService.AuthenticateShopAsync(Shop, token);
-            }
-
-            _shopInfo = await ShopService.GetShopAsync();
+            var shop = await ShopService.GetShopAsync();
+            _shopInfo = shop;
             _isLoading = false;
+            
+            if (AppBridgeService.IsAppBridgeInitialized())
+            {
+                await AppBridgeService.NavigateAsync("/subscription");
+            }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            // ignored
+            Logger.LogError(ex, "Error while getting shop info");
         }
     }
 }

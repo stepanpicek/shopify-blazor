@@ -23,6 +23,7 @@
       <Folder Include="Lists\" />
       <Folder Include="Navigation\" />
       <Folder Include="Overlays\" />
+      <Folder Include="Properties\" />
       <Folder Include="Tables\" />
       <Folder Include="Typography\" />
       <Folder Include="Utilities\" />
