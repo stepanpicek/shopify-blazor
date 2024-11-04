@@ -5,8 +5,24 @@ namespace ShopifyApp.Services;
 
 public class ShopService : IShopService
 {
-    public Task<ShopInfoResponse> GetShopAsync()
+    private readonly IAuthService _authService;
+
+    public ShopService(IAuthService authService)
     {
-        throw new NotImplementedException();
+        _authService = authService;
+    }
+
+    public async Task<ShopInfoResponse> GetShopAsync(string shop)
+    {
+        var accessToken = await _authService.GetShopAuthTokenAsync(shop);
+        var service = new ShopifySharp.ShopService($"https://{shop}", accessToken);
+
+        var shopInfo = await service.GetAsync();
+        return new ShopInfoResponse
+        {
+            Email = shopInfo.Email,
+            ShopName = shopInfo.Name,
+            Owner = shopInfo.ShopOwner
+        };
     }
 }

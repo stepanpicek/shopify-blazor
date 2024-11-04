@@ -4,15 +4,19 @@
 <MudThemeProvider />
 <MudPopoverProvider />
 
-<div class="page">
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+<div class="Polaris-Page">
+    <div class="Polaris-Box" style="--pc-box-padding-block-start-xs:var(--p-space-400);--pc-box-padding-block-start-md:var(--p-space-600);--pc-box-padding-block-end-xs:var(--p-space-400);--pc-box-padding-block-end-md:var(--p-space-600);--pc-box-padding-inline-start-xs:var(--p-space-400);--pc-box-padding-inline-start-sm:var(--p-space-0);--pc-box-padding-inline-end-xs:var(--p-space-400);--pc-box-padding-inline-end-sm:var(--p-space-0);position:relative">
+        <div class="Polaris-Page-Header--mediumTitle">
+            <div class="Polaris-Page-Header__Row">
+                <SectionOutlet SectionName="page-header" @rendermode="InteractiveAuto"/>
+            </div>
         </div>
-        <article id="content" class="content px-4">
+    </div>
+    <div class="Polaris-Page__Content">
+        <div class="Polaris-Layout">
             @Body
-        </article>
-    </main>
+        </div>
+    </div>
 </div>
 
 <div id="blazor-error-ui">

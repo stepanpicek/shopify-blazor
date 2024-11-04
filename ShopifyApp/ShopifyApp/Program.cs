@@ -1,8 +1,10 @@
 using Carter;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Options;
 using MudBlazor.Services;
 using ShopifyApp.Components;
 using ShopifyApp.Contexts;
+using ShopifyApp.Core.Providers;
 using ShopifyApp.Core.Services;
 using ShopifyApp.Core.Settings;
 using ShopifyApp.Entities;
@@ -27,6 +29,7 @@ builder.Services.AddPostgresDb<PostgresDbContext>(builder.Configuration.GetSecti
 builder.Services.AddDefaultIdentity<ShopifyUser>()
     .AddEntityFrameworkStores<PostgresDbContext>();
 
+builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddShopifySharpServiceFactories();
 builder.Services.AddShopifySharpUtilities();
 builder.Services.AddHttpContextAccessor();
@@ -35,6 +38,8 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<IAppBridgeService, AppBridgeService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IShopService, ShopService>();
+builder.Services.AddScoped<AuthenticationStateProvider, ShopifyAuthProvider>();
+builder.Services.AddScoped<INavigationWrapper, NavigationWrapper>();
 builder.Services.AddMudServices();
 
 builder.Services.AddAuthentication()

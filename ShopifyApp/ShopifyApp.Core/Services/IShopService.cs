@@ -4,5 +4,5 @@ namespace ShopifyApp.Core.Services;
 
 public interface IShopService
 {
-    Task<ShopInfoResponse> GetShopAsync();
+    Task<ShopInfoResponse> GetShopAsync(string shop);
 }

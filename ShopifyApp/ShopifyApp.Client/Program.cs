@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
 using ShopifyApp.Client.Handlers;
 using ShopifyApp.Client.Services;
+using ShopifyApp.Core.Providers;
 using ShopifyApp.Core.Services;
 using ShopifyApp.Core.Settings;
 
@@ -11,6 +13,10 @@ builder.Services.AddTransient<ShopifyAuthHandler>();
 builder.Services.AddScoped<IAppBridgeService, AppBridgeService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IShopService, ShopService>();
+builder.Services.AddScoped<INavigationWrapper, NavigationWrapper>();
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<AuthenticationStateProvider, ShopifyAuthProvider>();
+builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped(sp =>
 {
     var tokenService = sp.GetRequiredService<IAppBridgeService>();

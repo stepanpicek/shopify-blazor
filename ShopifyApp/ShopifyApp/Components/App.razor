@@ -22,6 +22,20 @@
     <script src="https://unpkg.com/@@shopify/app-bridge/actions@@latest"></script>
     <script src="js/appBridge.js"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const host = urlParams.get('host');
+            if(host != null)
+            {
+                const appBridge = window.appBridge;
+                appBridge.createAppBridge({
+                    host: host,
+                    apiKey:'6c572402fb6e121b9ebdfe72d6cf3643'
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>

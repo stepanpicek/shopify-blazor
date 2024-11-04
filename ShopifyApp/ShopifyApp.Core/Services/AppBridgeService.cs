@@ -1,33 +1,23 @@
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using ShopifyApp.Core.Settings;
 
 namespace ShopifyApp.Core.Services;
 
-public class AppBridgeService(IJSRuntime jsRuntime) : IAppBridgeService
+public class AppBridgeService(IJSRuntime jsRuntime, INavigationWrapper navigationManager) : IAppBridgeService
 {
     private IJSObjectReference? _appBridge;
-
+    
     public async Task CreateAppBridgeAsync(AppBridgeSettings settings)
     {
-        if (settings?.Host == null)
-        {
-            return;
-        }
-
-        try
-        {
-            _appBridge ??= await jsRuntime.InvokeAsync<IJSObjectReference>("appBridge.createAppBridge", settings);
-        }
-        catch (Exception)
-        {
-            // ignored
-        }
+        _appBridge ??= await jsRuntime.InvokeAsync<IJSObjectReference>("appBridge.getAppBridge");
+        await jsRuntime.InvokeVoidAsync("appBridge.subscribeNavigation", DotNetObjectReference.Create(navigationManager));
     }
 
     public async Task<string> GetSessionToken()
     {
-        var appBridge = _appBridge ?? throw new InvalidOperationException("AppBridge is not initialized");
-        return await jsRuntime.InvokeAsync<string>("appBridge.getNewSessionToken", appBridge);
+        _ = _appBridge ?? throw new InvalidOperationException("AppBridge is not initialized");
+        return await jsRuntime.InvokeAsync<string>("appBridge.getNewSessionToken");
     }
 
     public async Task<(bool isSuccess, string? sessionToken)> TryGetSessionToken()
@@ -39,7 +29,7 @@ public class AppBridgeService(IJSRuntime jsRuntime) : IAppBridgeService
 
         try
         {
-            var sessionToken = await jsRuntime.InvokeAsync<string>("appBridge.getNewSessionToken", _appBridge);
+            var sessionToken = await jsRuntime.InvokeAsync<string>("appBridge.getNewSessionToken");
             return (true, sessionToken);
         }
         catch (Exception)
@@ -55,6 +45,6 @@ public class AppBridgeService(IJSRuntime jsRuntime) : IAppBridgeService
 
     public async Task NavigateAsync(string path)
     {
-        await jsRuntime.InvokeAsync<string>("appBridge.redirect", _appBridge, path);
+        await jsRuntime.InvokeVoidAsync("appBridge.redirect", path);
     }
 }

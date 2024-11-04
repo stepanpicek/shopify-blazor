@@ -20,4 +20,8 @@
   <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\js\appBridge.js" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Providers\" />
+  </ItemGroup>
 </Project>

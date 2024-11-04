@@ -1,46 +1,63 @@
 ﻿@page "/"
-@using ShopifyApp.Core.Services
-@using ShopifyApp.Core.Dto
-@using BlazorPolaris.Actions.Button
-@inject ILogger<Home> Logger
-@inject IShopService ShopService
-@inject IAppBridgeService AppBridgeService
-@inherits AuthComponent
-@rendermode InteractiveWebAssembly
+@using ShopifyApp.Core.Services;
+@using ShopifyApp.Core.Dto;
+@using ShopifyApp.Client.Components.Headers
+@inject ILogger<Home> Logger;
+@inject IShopService ShopService;
+@inject IAppBridgeService AppBridgeService;
+@inject NavigationManager NavigationManager;
+@rendermode @(new InteractiveWebAssemblyRenderMode(false));
 
 <PageTitle>Home</PageTitle>
-<div class="Polaris-Page Polaris-Page--fullWidth">
-    <div class="Polaris-Page__Content">
-        <div class="Polaris-Layout">
-            <div class="Polaris-Layout__Section">
-                <div class="Polaris-LegacyCard">
-                    <div class="Polaris-LegacyCard__Header Polaris-LegacyCard__FirstSectionPadding">
-                        @if(_isLoading)
-                        {
-                            <div class="Polaris-SkeletonBodyText__SkeletonBodyTextContainer">
-                                <div class="Polaris-SkeletonBodyText">
-                                </div>
-                                <div class="Polaris-SkeletonBodyText">
-                                </div>
-                                <div class="Polaris-SkeletonBodyText">
-                                </div>
+<SectionContent SectionName="page-header"><HomeHeader /></SectionContent>
+<div class="Polaris-Layout__Section">
+    <div class="Polaris-LegacyCard">
+        <div class="Polaris-LegacyCard__Header Polaris-LegacyCard__FirstSectionPadding">
+            <AuthorizeView>
+                <Authorized>
+                    @if (_isLoading)
+                    {
+                        <div class="Polaris-SkeletonBodyText__SkeletonBodyTextContainer">
+                            <div class="Polaris-SkeletonBodyText">
                             </div>
-                        }
-                        else
-                        {
-                            <h2 class="Polaris-Text--root Polaris-Text--headingSm">Welcome @_shopInfo?.ShopName!</h2>
-                            <p>Name: @_shopInfo?.Owner</p>
-                            <p>Email: @_shopInfo?.Email</p>
-                            <PolarisButton TextAlign="ButtonTextAlign.Right">
-                                View detail
-                            </PolarisButton>
-                        }
+                            <div class="Polaris-SkeletonBodyText">
+                            </div>
+                            <div class="Polaris-SkeletonBodyText">
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <h2 class="Polaris-Text--root Polaris-Text--headingSm">Welcome @_shopInfo?.ShopName!</h2>
+                        <p>Name: @_shopInfo?.Owner</p>
+                        <p>Email: @_shopInfo?.Email</p>
+                        <MudButton OnClick="GotoSubscription">Navigate to Subscription</MudButton>
+                    }
+                </Authorized>
+                <Authorizing>
+                    <div class="Polaris-SkeletonBodyText__SkeletonBodyTextContainer">
+                        <div class="Polaris-SkeletonBodyText">
+                        </div>
+                        <div class="Polaris-SkeletonBodyText">
+                        </div>
+                        <div class="Polaris-SkeletonBodyText">
+                        </div>
                     </div>
-                    <div class="Polaris-LegacyCard__Section Polaris-LegacyCard__LastSectionPadding">
-                        
+                </Authorizing>
+                <NotAuthorized>
+                    <div class="Polaris-SkeletonBodyText__SkeletonBodyTextContainer">
+                        <div class="Polaris-SkeletonBodyText">
+                        </div>
+                        <div class="Polaris-SkeletonBodyText">
+                        </div>
+                        <div class="Polaris-SkeletonBodyText">
+                        </div>
                     </div>
-                </div>
-            </div>
+                </NotAuthorized>
+            </AuthorizeView>
+        </div>
+        <div class="Polaris-LegacyCard__Section Polaris-LegacyCard__LastSectionPadding">
+
         </div>
     </div>
 </div>
@@ -49,23 +66,33 @@
 {
     private bool _isLoading = true;
     private ShopInfoResponse? _shopInfo;
+
+    [CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
+
+    [SupplyParameterFromQuery] public string? Shop { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         try
         {
-            var shop = await ShopService.GetShopAsync();
+            if (authenticationState is null || (await authenticationState).User.Identity?.IsAuthenticated is false)
+            {
+                NavigationManager.NavigateTo("/no-authenticated");
+            }
+
+            var shop = await ShopService.GetShopAsync(Shop);
             _shopInfo = shop;
             _isLoading = false;
-            
-            if (AppBridgeService.IsAppBridgeInitialized())
-            {
-                await AppBridgeService.NavigateAsync("/subscription");
-            }
         }
         catch (Exception ex)
         {
             Logger.LogError(ex, "Error while getting shop info");
         }
+    }
+    
+    private async Task GotoSubscription()
+    {
+        await AppBridgeService.NavigateAsync("/subscription");
     }
 }

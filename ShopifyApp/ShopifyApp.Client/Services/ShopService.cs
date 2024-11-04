@@ -7,7 +7,7 @@ namespace ShopifyApp.Client.Services;
 
 public class ShopService(HttpClient httpClient) : IShopService
 {
-    public async Task<ShopInfoResponse> GetShopAsync()
+    public async Task<ShopInfoResponse> GetShopAsync(string shop)
     {
         var response =
             await httpClient.GetFromJsonAsync<ShopInfoResponse>(
