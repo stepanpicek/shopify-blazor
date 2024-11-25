@@ -25,9 +25,9 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
-builder.Services.AddPostgresDb<PostgresDbContext>(builder.Configuration.GetSection("Postgres").Get<PostgresSettings>() ?? new PostgresSettings());
+builder.Services.AddPostgresDb<AppDbContext>(builder.Configuration.GetSection("MySQL").Get<MysqlSettings>() ?? new MysqlSettings());
 builder.Services.AddDefaultIdentity<ShopifyUser>()
-    .AddEntityFrameworkStores<PostgresDbContext>();
+    .AddEntityFrameworkStores<AppDbContext>();
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddShopifySharpServiceFactories();

@@ -12,5 +12,19 @@
     volumes:
       - postgres-data:/var/lib/postgresql/data
     restart: unless-stopped  
+  mysql:
+    image: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: notifly
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_TCP_PORT: 3360
+    ports:
+      - "3360:3360"
+    volumes:
+      - mysql-data:/var/lib/mysql  
 volumes:
   postgres-data:
+  mysql-data:  

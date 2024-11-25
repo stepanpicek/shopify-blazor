@@ -4,9 +4,9 @@ using ShopifyApp.Entities;
 
 namespace ShopifyApp.Contexts;
 
-public class PostgresDbContext : IdentityDbContext<ShopifyUser>
+public class AppDbContext : IdentityDbContext<ShopifyUser>
 {
-    public PostgresDbContext(DbContextOptions<PostgresDbContext> options) : base(options)
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
 }
