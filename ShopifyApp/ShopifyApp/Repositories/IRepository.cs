@@ -6,7 +6,7 @@ public interface IRepository<TEntity>
     where TEntity : class
 {
     string TableName { get; }
-    Task<List<TEntity>> Getasync(Expression<Func<TEntity, bool>> predicate);
+    Task<List<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate);
     Task<List<TEntity>> GetAllAsync();
     Task<TEntity> InsertAsync(TEntity entity);
     Task<IEnumerable<TEntity>> InsertAsync(IEnumerable<TEntity> entities);

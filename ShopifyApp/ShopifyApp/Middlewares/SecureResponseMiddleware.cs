@@ -1,19 +1,12 @@
 namespace ShopifyApp.Middlewares;
 
-public class SecureResponseMiddleware
+public class SecureResponseMiddleware(RequestDelegate next)
 {
-    private readonly RequestDelegate _next;
-
-    public SecureResponseMiddleware(RequestDelegate next)
-    {
-        _next = next;
-    }
-
     public async Task InvokeAsync(HttpContext context)
     {
         var shop = context.Request.Query["shop"].ToString();
         context.Response.Headers.Append("Content-Security-Policy",
             $"frame-ancestors {shop} admin.shopify.com;");
-        await _next(context);
+        await next(context);
     }
 }

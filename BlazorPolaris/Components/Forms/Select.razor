@@ -1,0 +1,75 @@
+@namespace BlazorPolaris
+@inherits ComponentBase
+
+<div class="Polaris-Labelled">
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <div class="Polaris-Labelled__LabelWrapper">
+            <label class="Polaris-Label" for="@Id">
+                <span class="Polaris-Label__Text">@Label</span>
+            </label>
+        </div>
+    }
+
+    <div class="Polaris-Select">
+        <select id="@Id" 
+                class="Polaris-Select__Input" 
+                @onchange="OnChangeHandler"
+                disabled="@Disabled">
+            @if (PlaceholderOption != null)
+            {
+                <option value="">@PlaceholderOption</option>
+            }
+            @foreach (var option in Options)
+            {
+                <option value="@option.Value" selected="@(option.Value == Value)">
+                    @option.Label
+                </option>
+            }
+        </select>
+        <div class="Polaris-Select__Content" aria-hidden="true">
+            <span class="Polaris-Select__SelectedOption">
+                @(Options.FirstOrDefault(o => o.Value == Value)?.Label ?? PlaceholderOption)
+            </span>
+            <span class="Polaris-Select__Icon">
+                <span class="Polaris-Icon">
+                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                        <path d="M10 16l-4-4h8l-4 4zm0-12l4 4H6l4-4z"/>
+                    </svg>
+                </span>
+            </span>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(HelpText))
+    {
+        <div class="Polaris-TextContainer Polaris-TextContainer--spacingTight">
+            <p class="Polaris-Text--root Polaris-Text--bodySm Polaris-Text--subdued">@HelpText</p>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public string Id { get; set; } = Guid.NewGuid().ToString();
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string? Value { get; set; }
+    [Parameter] public string? PlaceholderOption { get; set; }
+    [Parameter] public string? HelpText { get; set; }
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public List<SelectOption> Options { get; set; } = new();
+    [Parameter] public EventCallback<string> ValueChanged { get; set; }
+
+    private async Task OnChangeHandler(ChangeEventArgs e)
+    {
+        if (e.Value is string value)
+        {
+            await ValueChanged.InvokeAsync(value);
+        }
+    }
+
+    public class SelectOption
+    {
+        public string Value { get; set; } = string.Empty;
+        public string Label { get; set; } = string.Empty;
+    }
+} 

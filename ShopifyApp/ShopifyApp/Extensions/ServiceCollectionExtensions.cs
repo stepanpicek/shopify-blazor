@@ -5,13 +5,13 @@ namespace ShopifyApp.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddPostgresDb<TDbContext>(this IServiceCollection services, MysqlSettings settings)
+    public static IServiceCollection AddMySqlDb<TDbContext>(this IServiceCollection services, MysqlSettings settings)
         where TDbContext : DbContext
     {
         ArgumentNullException.ThrowIfNull(settings); 
         var connectionString = settings.ConnectionString;
         var serverVersion = new MySqlServerVersion(new Version(8, 0, 36));
-        services.AddDbContext<TDbContext>(options => options.UseMySql(connectionString, serverVersion));
+        services.AddDbContextFactory<TDbContext>(options => options.UseMySql(connectionString, serverVersion));
         return services;
     }
 }

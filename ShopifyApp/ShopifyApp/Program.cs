@@ -11,21 +11,29 @@ using ShopifyApp.Entities;
 using ShopifyApp.Extensions;
 using ShopifyApp.Handlers;
 using ShopifyApp.Middlewares;
+using ShopifyApp.Repositories;
 using ShopifyApp.Services;
+using ShopifyApp.Workers;
 using ShopifySharp.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Workers
+builder.Services.AddHostedService<ActionQueueWorker>();
+
+//Config
 builder.Services.Configure<ShopifySettings>(builder.Configuration.GetSection("Shopify"));
 builder.Services.AddSingleton(resolver =>
     resolver.GetRequiredService<IOptions<ShopifySettings>>().Value);
 
 builder.Services.AddCarter();
-// Add services to the container.
+
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
-builder.Services.AddPostgresDb<AppDbContext>(builder.Configuration.GetSection("MySQL").Get<MysqlSettings>() ?? new MysqlSettings());
+//DB
+builder.Services.AddMySqlDb<AppDbContext>(builder.Configuration.GetSection("MySQL").Get<MysqlSettings>() ?? new MysqlSettings());
 builder.Services.AddDefaultIdentity<ShopifyUser>()
     .AddEntityFrameworkStores<AppDbContext>();
 
@@ -40,6 +48,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IShopService, ShopService>();
 builder.Services.AddScoped<AuthenticationStateProvider, ShopifyAuthProvider>();
 builder.Services.AddScoped<INavigationWrapper, NavigationWrapper>();
+builder.Services.AddScoped<IActionRepository, ActionRepository>();
+builder.Services.AddScoped<ITriggerRepository, TriggerRepository>();
+builder.Services.AddScoped<IWebhookRepository, WebhookRepository>();
 builder.Services.AddMudServices();
 
 builder.Services.AddAuthentication()

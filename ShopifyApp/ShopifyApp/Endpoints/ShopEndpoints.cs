@@ -1,9 +1,7 @@
 using Carter;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using ShopifyApp.Core.Dto;
 using ShopifyApp.Core.Services;
-using ShopifyApp.Entities;
 using ShopifyApp.Handlers;
 using ShopifySharp;
 

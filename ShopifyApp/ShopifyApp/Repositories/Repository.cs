@@ -4,15 +4,11 @@ using ShopifyApp.Extensions;
 
 namespace ShopifyApp.Repositories;
 
-public class Repository<TDbContext, TEntity> : IRepository<TEntity> 
+public abstract class Repository<TDbContext, TEntity>(IDbContextFactory<TDbContext> db) : IRepository<TEntity>
     where TEntity : class
     where TDbContext : DbContext
 {
     private string _tableName;
-    public Repository(IDbContextFactory<TDbContext> db)
-    {
-        Db = db;
-    }
 
     public string TableName
     {
@@ -27,9 +23,9 @@ public class Repository<TDbContext, TEntity> : IRepository<TEntity>
         }
     }
 
-    protected readonly IDbContextFactory<TDbContext> Db;
+    protected readonly IDbContextFactory<TDbContext> Db = db;
     
-    public Task<List<TEntity>> Getasync(Expression<Func<TEntity, bool>> predicate)
+    public Task<List<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate)
     {
         using var db = Db.CreateDbContext();
         return db.Set<TEntity>()
